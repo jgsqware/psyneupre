@@ -3,6 +3,10 @@
    Modern Single Page - 2026
    ======================================== */
 
+.is-hidden {
+    display: none !important;
+}
+
 /* CSS Variables */
 :root {
     /* Couleurs - Tons de vert sauge doux */
