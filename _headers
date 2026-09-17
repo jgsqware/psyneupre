@@ -1,0 +1,16 @@
+# En-têtes Cloudflare Pages. Miroir de ceux posés par nginx.conf sur node2 :
+# sur Pages il n'y a pas de nginx, ces en-têtes DOIVENT être redéclarés ici.
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+
+# HTML toujours revalidé : une page unique qui change doit sortir vite du cache.
+/
+  Cache-Control: public, max-age=0, must-revalidate
+
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/styles.css
+  Cache-Control: public, max-age=3600

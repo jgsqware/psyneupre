@@ -7,8 +7,9 @@ FROM nginx:1.27-alpine
 # Notre config (écoute :8145, chemins temp sous /tmp pour tourner non-root).
 COPY nginx.conf /etc/nginx/nginx.conf
 
-# Le site statique.
-COPY index.html styles.css /usr/share/nginx/html/
+# Le site statique. robots.txt/sitemap.xml sont copiés pour garder node2 iso au
+# public (Cloudflare Pages) : node2 reste tailnet-only, c'est l'aperçu avant prod.
+COPY index.html styles.css robots.txt sitemap.xml /usr/share/nginx/html/
 
 # nginx:alpine embarque l'utilisateur non privilégié `nginx` (UID 101). On rend
 # les chemins runtime accessibles en écriture puis on lâche root.

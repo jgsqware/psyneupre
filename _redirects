@@ -1,0 +1,3 @@
+# Apex -> www. Le `canonical` et le JSON-LD pointent www : sans cette 301, les
+# deux hôtes servent la même page et Google voit du contenu dupliqué.
+https://psyneupre.be/* https://www.psyneupre.be/:splat 301
