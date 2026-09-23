@@ -39,10 +39,9 @@ Prod publique = `git push origin main` → Cloudflare Pages build auto.
 - 🔴 `canonical`, `og:url`, `sitemap.xml` et `robots.txt` pointent tous **`https://www.psyneupre.be`**
   (avec `www`). `_redirects` 301 l'apex vers `www`. Changer d'avis sur le `www` oblige à
   reprendre ces cinq endroits **ensemble**, sinon Google voit du contenu dupliqué.
-- 🟡 Le corps de texte (section « Mon approche », descriptions des 3 services) est
-  **masqué** via `.is-hidden` (`display:none`), pas supprimé — choix design du 2026-09-17.
-  Google ignore largement le contenu masqué : le site n'a donc quasi pas de texte
-  indexable, et son SEO repose sur le JSON-LD + Google Business Profile. Retirer la
-  classe suffit à tout rétablir.
+- 🟢 Le site porte le contenu complet fourni par la cliente (2026-09-23) : présentation,
+  parcours, consultations, thèmes, informations/tarif (30 min · 40 €). Seuls le
+  `.hero-tagline` reste masqué via `.is-hidden`. Texte repris tel quel (coquilles
+  corrigées) — ne pas le réécrire sans son accord.
 - 🟡 GitHub Pages est **désactivé** depuis 2026-08-24 — à ne pas confondre avec
   Cloudflare Pages, qui est le front public depuis 2026-09-17.

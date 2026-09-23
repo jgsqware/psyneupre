@@ -1,5 +1,5 @@
 /* ========================================
-   Claire Dubois - Psychologue & Sexologue
+   Céline Liurno - Psychologue & Sexologue
    Modern Single Page - 2026
    ======================================== */
 
@@ -613,5 +613,163 @@ address {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
+    }
+}
+
+/* ========================================
+   Contenu éditorial (présentation, parcours, thèmes, infos)
+   ======================================== */
+.intro {
+    max-width: 700px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.intro .lead {
+    font-family: var(--font-serif);
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    color: var(--sage-700);
+}
+
+.credentials {
+    list-style: none;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--sage-100);
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.credentials li {
+    margin-bottom: 0.4rem;
+}
+
+.prose {
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.prose p,
+.prose li {
+    color: var(--text-light);
+}
+
+.prose .lead {
+    font-size: 1.2rem;
+    color: var(--sage-700);
+}
+
+.checklist {
+    list-style: none;
+    margin: 0 0 1.5em;
+}
+
+.checklist li {
+    position: relative;
+    padding-left: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.checklist li::before,
+.theme-card li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.75em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--sage-400);
+}
+
+.pullquote {
+    margin-top: 2.5rem;
+    padding: 2rem;
+    font-family: var(--font-serif);
+    font-size: clamp(1.3rem, 3vw, 1.7rem);
+    font-style: italic;
+    text-align: center;
+    color: var(--sage-600);
+    background: var(--sage-50);
+    border-left: 3px solid var(--sage-400);
+    border-radius: 0 8px 8px 0;
+}
+
+.themes-grid {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.theme-card {
+    background: var(--white);
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid var(--sage-100);
+}
+
+.theme-card h3 {
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--sage-100);
+}
+
+.theme-card ul {
+    list-style: none;
+}
+
+.theme-card li {
+    position: relative;
+    padding-left: 1.25rem;
+    margin-bottom: 0.4rem;
+    font-size: 0.95rem;
+    color: var(--text-light);
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.info-tile {
+    background: var(--white);
+    padding: 2rem 1.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--sage-100);
+    text-align: center;
+}
+
+.info-tile p {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: 1.4rem;
+    color: var(--sage-800);
+}
+
+.info-tile-price {
+    background: var(--sage-500);
+    border-color: var(--sage-500);
+}
+
+.info-tile-price .label,
+.info-tile-price p {
+    color: var(--white);
+}
+
+@media (min-width: 768px) {
+    .themes-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .info-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (min-width: 1000px) {
+    .themes-grid {
+        grid-template-columns: repeat(3, 1fr);
     }
 }
