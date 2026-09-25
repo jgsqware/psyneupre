@@ -78,6 +78,26 @@ Prod publique = `git push origin main` → Workers Builds (build + deploy auto).
   `OG Image.dc.html` du projet design (1200×630, Chromium headless, polices Google
   embarquées en data-URI). DesignSync tronque les binaires à 256 Kio, donc on le
   **regénère** au lieu de le télécharger.
+- 🔴 **Le mail de `psyneupre.be` est du Google Workspace, et ses enregistrements DNS ne
+  sont PAS optionnels.** `celineliurno@psyneupre.be` est la boîte, `contact@psyneupre.be`
+  en est un alias — c'est l'adresse que sert le formulaire (`CONTACT_TO`). La zone a été
+  migrée de Combell vers Cloudflare le 2026-09-17 **sans reprendre les enregistrements
+  mail** : la réception est restée morte 9 jours, personne ne s'en est aperçu parce qu'une
+  absence de MX ne produit aucune erreur visible côté site. Restauré le 2026-09-26 :
+
+      MX     psyneupre.be          1 smtp.google.com      (DNS only, jamais proxifié)
+      TXT    psyneupre.be          v=spf1 include:_spf.google.com ~all
+      TXT    psyneupre.be          google-site-verification=0F6yus4lh6v-...
+      TXT    _dmarc.psyneupre.be   v=DMARC1;p=none;
+
+  Ne jamais supprimer ces quatre-là, et ne jamais ajouter un **second** SPF à la racine :
+  deux `v=spf1` sur le même nom rendent l'enregistrement invalide. Resend envoie depuis
+  `send.psyneupre.be`, donc il n'a pas besoin du SPF racine — c'est ce qui évite la
+  collision.
+- 🟡 Les anciens serveurs de noms Combell (`ns3.combell.net`, `ns4.combell.net`,
+  `ns1.combell.eu`) servaient encore la zone d'origine après la migration. C'est là qu'on
+  a relu les valeurs exactes. Utile si d'autres enregistrements manquent — mais ça ne
+  durera pas, ne pas compter dessus.
 - 🟡 GitHub Pages est **désactivé** depuis 2026-08-24. Cloudflare **Pages** n'a jamais
   été créé non plus : le front public est un **Worker** (assets statiques), monté le
   2026-09-25.
