@@ -1,3 +1,9 @@
-# Apex -> www. Le `canonical` et le JSON-LD pointent www : sans cette 301, les
-# deux hôtes servent la même page et Google voit du contenu dupliqué.
-https://psyneupre.be/* https://www.psyneupre.be/:splat 301
+# Volontairement sans règle.
+#
+# La redirection apex -> www ne peut PAS vivre ici : Workers n'accepte que des
+# sources relatives dans _redirects (« Only relative URLs are allowed »), donc
+# pas de règle qui discrimine sur l'hôte. Pages l'autorisait, plus Workers.
+# Elle est faite au niveau de la zone, par une Redirect Rule Cloudflare, qui
+# s'exécute de toute façon avant le Worker.
+#
+# Ne pas remettre `https://psyneupre.be/* ...` ici : le déploiement échoue.

@@ -62,8 +62,11 @@ Prod publique = `git push origin main` → Workers Builds (build + deploy auto).
 - 🔴 Le JSON-LD `MedicalBusiness` de `index.html` porte l'adresse, le téléphone et le mail
   **réels**. Ce sont des données métier : ne jamais les inventer ni les « corriger ».
 - 🔴 `canonical`, `og:url`, `sitemap.xml` et `robots.txt` pointent tous **`https://www.psyneupre.be`**
-  (avec `www`). `_redirects` 301 l'apex vers `www`. Changer d'avis sur le `www` oblige à
-  reprendre ces cinq endroits **ensemble**, sinon Google voit du contenu dupliqué.
+  (avec `www`). La 301 de l'apex vers `www` est une **Redirect Rule au niveau de la zone**,
+  PAS `_redirects` : Workers n'accepte que des sources relatives dans ce fichier, donc
+  aucune règle ne peut y discriminer sur l'hôte (Pages le permettait — c'est ce qui a fait
+  échouer le deuxième build). Changer d'avis sur le `www` oblige à reprendre ces cinq
+  endroits **ensemble**, sinon Google voit du contenu dupliqué.
 - 🟢 Le site porte le contenu complet fourni par la cliente (2026-09-23) : présentation,
   parcours, consultations, thèmes, informations/tarif (30 min · 40 €), FAQ, contact.
   Texte repris tel quel (coquilles corrigées) — ne pas le réécrire sans son accord.
