@@ -18,8 +18,7 @@ n'existe donc que sur le front public. `seo/` est un outillage Python autonome
 
 ## Commandes
     python3 -m http.server 8000     # aperçu local
-    ./build.sh                      # produit dist/ (les assets statiques publiés)
-    npx wrangler pages functions build --outdir=./worker-build/   # compile functions/
+    ./build.sh                      # produit dist/ ET worker-build/ — build complet
     npx wrangler deploy             # déploie (normalement fait par Workers Builds)
     ship psyneupre                  # déploie l'aperçu node2 (mode A · docker-context)
     ship psyneupre --checks-only    # sondes via l'edge, zéro deploy
@@ -34,6 +33,11 @@ Prod publique = `git push origin main` → Workers Builds (build + deploy auto).
   dans aucune des deux — il est compilé à part vers `worker-build/`.
 - 🔴 **`worker-build/` doit rester HORS de `dist/`.** `dist/` est publié intégralement comme
   assets publics : y compiler le script serveur le mettrait en téléchargement libre.
+- 🔴 **Le build tient entier dans `build.sh`**, y compris `wrangler pages functions build
+  --outdir=./worker-build/`. Ne pas éclater ça dans la commande de build du dashboard :
+  le premier build a échoué précisément parce que le `--outdir` y manquait, wrangler
+  écrivait ailleurs et `wrangler deploy` ne trouvait plus son point d'entrée. Côté
+  Workers Builds, la commande de build est donc juste `./build.sh`.
 - 🔴 **Le formulaire ne marche que sur Pages.** `script.js` POST `/api/contact`, servi par
   `functions/api/contact.js` (Resend). node2 n'a pas de runtime Workers : nginx répond
   405 sur ce POST et le formulaire affiche son message d'échec. C'est attendu — l'aperçu
