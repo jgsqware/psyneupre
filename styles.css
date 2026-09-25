@@ -260,7 +260,7 @@ address { font-style: normal; }
 }
 
 /* Thèmes : nuages de mots */
-.themes-grid { display: grid; gap: 1.5rem; }
+.themes-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem; }
 .theme-card {
     background: var(--white);
     padding: 2rem;
@@ -270,6 +270,7 @@ address { font-style: normal; }
     flex-direction: column;
     align-items: center;
     text-align: center;
+    flex: 1 1 100%;
 }
 .theme-card h3 {
     align-self: stretch;
@@ -291,9 +292,7 @@ address { font-style: normal; }
     text-wrap: balance;
     cursor: default;
     transform-origin: center;
-    will-change: transform;
-    backface-visibility: hidden;
-    transition: transform var(--transition), color var(--transition), text-shadow var(--transition);
+    transition: transform var(--transition), color var(--transition);
 }
 /* tailles : cycle de 4 */
 .cloud li:nth-child(4n+1) { font-size: 1.3rem; }
@@ -306,8 +305,10 @@ address { font-style: normal; }
 .cloud li:nth-child(3n+1) { color: var(--sage-800); }
 .cloud li:nth-child(3n+2) { color: var(--sage-600); }
 .cloud li:nth-child(3n+3) { color: var(--sage-700); }
-/* survol : zoom + gras simulé par ombre (pas de décalage de mise en page) */
-.cloud li:hover { transform: scale(1.08); text-shadow: 0 0 0.6px currentColor, 0 0 0.6px currentColor; }
+/* survol : zoom + gras simulé par un contour (pas de décalage de mise en page).
+   Surtout pas text-shadow : son 3e paramètre est un RAYON DE FLOU, le mot
+   survolé paraissait flou. -webkit-text-stroke épaissit sans rien flouter. */
+.cloud li:hover { transform: scale(1.08); -webkit-text-stroke: 0.35px currentColor; paint-order: stroke fill; }
 .cloud li:nth-child(4n+1):hover { color: var(--sage-500); }
 .cloud li:nth-child(4n+2):hover { color: var(--sage-900); }
 .cloud li:nth-child(4n+3):hover { color: var(--sage-600); }
@@ -372,7 +373,8 @@ address { font-style: normal; }
 .faq summary::after { content: '+'; flex: none; font-size: 1.4rem; font-weight: 300; color: var(--sage-500); line-height: 1; }
 .faq details[open] summary::after { content: '−'; }
 .faq summary:hover { color: var(--sage-600); }
-.faq details p { padding: 0 0 1.25rem; margin: 0; color: var(--text-light); text-wrap: pretty; }
+.faq details p { padding: 0; margin: 0 0 0.9rem; color: var(--text-light); text-wrap: pretty; }
+.faq details p:last-of-type { margin-bottom: 1.25rem; }
 
 /* Contact */
 .contact-content { max-width: 600px; margin: 0 auto; }
@@ -470,10 +472,10 @@ address { font-style: normal; }
 
 @media (min-width: 480px) { .info-grid { grid-template-columns: 1fr 1fr; } }
 @media (min-width: 768px) {
-    .themes-grid { grid-template-columns: repeat(2, 1fr); }
+    .theme-card { flex: 0 1 calc((100% - 1.5rem) / 2); }
     .info-grid { grid-template-columns: repeat(4, 1fr); }
 }
-@media (min-width: 1000px) { .themes-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 1000px) { .theme-card { flex: 0 1 calc((100% - 3rem) / 3); } }
 
 @media (max-width: 767px) {
     .nav-right { gap: 1.25rem; }
