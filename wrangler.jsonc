@@ -17,6 +17,23 @@
     "binding": "ASSETS"
   },
 
+  // ATTENTION : `wrangler deploy` SUPPRIME toutes les vars avant de poser celles
+  // d'ici. Une variable ajoutée uniquement dans le dashboard disparaît donc au
+  // push suivant. Ces deux-là doivent rester ici, c'est la source de vérité.
+  // Ni l'une ni l'autre n'est sensible : contact@ est déjà public dans le
+  // JSON-LD de index.html, et formulaire@ est une adresse d'expédition.
+  "vars": {
+    "CONTACT_TO": "contact@psyneupre.be",
+    "CONTACT_FROM": "Site psyneupre <formulaire@psyneupre.be>"
+  },
+
+  // RESEND_API_KEY n'est PAS ici et ne doit JAMAIS y être : ce dépôt est public.
+  // C'est un Secret, posé dans le dashboard ou via `wrangler secret put` — les
+  // secrets, eux, survivent aux déploiements. On le déclare seulement comme
+  // requis : le deploy échoue franchement s'il manque, au lieu de laisser le
+  // formulaire renvoyer un 502 silencieux en production.
+  "secrets": { "required": ["RESEND_API_KEY"] },
+
   // Workers Logs — la raison d'être du choix Workers plutôt que Pages :
   // sans ça, un échec d'envoi Resend sur /api/contact est invisible.
   "observability": { "enabled": true }
