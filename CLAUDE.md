@@ -78,6 +78,17 @@ Prod publique = `git push origin main` → Workers Builds (build + deploy auto).
   `OG Image.dc.html` du projet design (1200×630, Chromium headless, polices Google
   embarquées en data-URI). DesignSync tronque les binaires à 256 Kio, donc on le
   **regénère** au lieu de le télécharger.
+- 🔴 **Les polices sont auto-hébergées dans `fonts/`, ne jamais revenir à
+  `fonts.googleapis.com`.** Chaque visite y transmettrait l'IP de la visiteuse à un tiers :
+  sur un site de psychologue et sexologue, le simple fait de consulter la page est une
+  information sensible. Les `@font-face` sont en tête de `styles.css`, les deux fontes du
+  haut de page sont en `preload` dans `index.html` (avec `crossorigin`, obligatoire même
+  en same-origin). Ce sont des polices **variables** : 6 fichiers couvrent toutes les
+  graisses, d'où les `font-weight: 400 600`. Toute nouvelle graisse se prend dans le
+  fichier existant, pas en ajoutant un fichier. `fonts/` est dans les deux allowlists.
+- 🟡 Cloudflare Web Analytics est posé **à la main** en bas de `index.html` : l'injection
+  automatique ne s'applique pas aux réponses d'un Worker, elle ne vise que les origines
+  proxifiées. Le token est public par construction, ce n'est pas un secret.
 - 🔴 **Le mail de `psyneupre.be` est du Google Workspace, et ses enregistrements DNS ne
   sont PAS optionnels.** `celineliurno@psyneupre.be` est la boîte, `contact@psyneupre.be`
   en est un alias — c'est l'adresse que sert le formulaire (`CONTACT_TO`). La zone a été

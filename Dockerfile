@@ -13,6 +13,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
 # et moins functions/ : les Pages Functions n'ont pas d'équivalent sous nginx,
 # donc POST /api/contact échoue sur l'aperçu — le formulaire ne s'y teste pas.
 COPY index.html styles.css script.js favicon.svg og-image.png robots.txt sitemap.xml /usr/share/nginx/html/
+COPY fonts/ /usr/share/nginx/html/fonts/
 
 # nginx:alpine embarque l'utilisateur non privilégié `nginx` (UID 101). On rend
 # les chemins runtime accessibles en écriture puis on lâche root.

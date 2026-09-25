@@ -18,6 +18,7 @@ set -eu
 rm -rf dist worker-build
 mkdir -p dist
 cp index.html styles.css script.js robots.txt _headers _redirects favicon.svg og-image.png dist/
+cp -r fonts dist/
 
 # sitemap : lastmod = date de publication
 sed "s|<lastmod>[^<]*</lastmod>|<lastmod>$(date -u +%Y-%m-%d)</lastmod>|" sitemap.xml > dist/sitemap.xml

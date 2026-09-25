@@ -28,9 +28,13 @@
     <meta name="twitter:image" content="https://www.psyneupre.be/og-image.png">
     <meta name="theme-color" content="#7A9568">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&amp;family=Nunito+Sans:opsz,wght@6..12,300;6..12,400;6..12,500&amp;display=swap" rel="stylesheet">
+    <!-- Polices auto-hébergées : aucune requête vers Google, donc aucune IP de
+         visiteuse transmise à un tiers. Les @font-face sont dans styles.css.
+         On précharge les deux fontes latines du haut de page (titre + texte) ;
+         le crossorigin est obligatoire même en same-origin, les polices étant
+         toujours récupérées en mode CORS. -->
+    <link rel="preload" href="fonts/cormorant-garamond-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="fonts/nunito-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="styles.css">
     <script src="script.js" defer></script>
 
@@ -454,5 +458,11 @@
         <a href="tel:+32492701309" class="btn">Appeler</a>
         <a href="#formulaire" class="btn btn-outline">Écrire</a>
     </div>
+
+    <!-- Cloudflare Web Analytics : sans cookie, sans identifiant, sans suivi entre
+         sites. Le token n'est pas un secret, il est public par construction.
+         Posé à la main : l'injection automatique de Cloudflare ne s'applique pas
+         aux réponses générées par un Worker. -->
+    <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "0a63dce182bd4205a72daf646c99b39d"}'></script>
 </body>
 </html>
