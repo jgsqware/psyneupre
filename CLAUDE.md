@@ -5,9 +5,9 @@ Site vitrine de Céline Liurno, psychologue & sexologue à Plainevaux (Neupré, 
 ## Stack
 Statique pur : `index.html`, `styles.css`, `script.js`, `favicon.svg`, `og-image.png`.
 Aucun build, aucun framework, aucun bundler. Seule exception au « tout statique » :
-`functions/api/contact.js`, une Cloudflare Pages Function (formulaire → Resend), qui
-n'existe donc que sur le front public. `seo/` est un outillage Python autonome
-(pytrends), sans lien avec le site servi.
+`functions/api/contact.js` (formulaire → Resend), écrit selon la convention de routage
+par fichiers de Pages mais compilé en Worker — il n'existe donc que sur le front public.
+`seo/` est un outillage Python autonome (pytrends), sans lien avec le site servi.
 
 **Deux fronts, un seul public :**
 
@@ -38,7 +38,7 @@ Prod publique = `git push origin main` → Workers Builds (build + deploy auto).
   le premier build a échoué précisément parce que le `--outdir` y manquait, wrangler
   écrivait ailleurs et `wrangler deploy` ne trouvait plus son point d'entrée. Côté
   Workers Builds, la commande de build est donc juste `./build.sh`.
-- 🔴 **Le formulaire ne marche que sur Pages.** `script.js` POST `/api/contact`, servi par
+- 🔴 **Le formulaire ne marche que sur le Worker.** `script.js` POST `/api/contact`, servi par
   `functions/api/contact.js` (Resend). node2 n'a pas de runtime Workers : nginx répond
   405 sur ce POST et le formulaire affiche son message d'échec. C'est attendu — l'aperçu
   node2 ne teste que le rendu. La prod exige trois variables dans le Worker → Settings →
@@ -55,8 +55,8 @@ Prod publique = `git push origin main` → Workers Builds (build + deploy auto).
   échec Resend sur `/api/contact` est invisible. `observability` est activé dans
   `wrangler.jsonc`.
 - 🔴 Les en-têtes de sécurité sont déclarés **deux fois** : `nginx.conf` (node2) et
-  `_headers` (Pages). Il n'y a pas de nginx sur Pages — modifier l'un sans l'autre crée
-  un écart silencieux entre l'aperçu et la prod.
+  `_headers` (Worker). Il n'y a pas de nginx devant le Worker — modifier l'un sans l'autre
+  crée un écart silencieux entre l'aperçu et la prod.
 - 🔴 `absolute_redirect off` dans `nginx.conf` : sans lui, nginx émet des redirections
   `http://psyneupre.jgsquare.io:8145/…` (port interne, HTTP) derrière Caddy → page morte.
 - 🔴 Le JSON-LD `MedicalBusiness` de `index.html` porte l'adresse, le téléphone et le mail
