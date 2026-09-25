@@ -1,0 +1,23 @@
+{
+  // Worker « static assets » : dist/ est servi tel quel, et tout ce qui ne
+  // correspond à aucun fichier tombe sur le script — c'est-à-dire /api/contact.
+  // Pas besoin de run_worker_first : aucun asset ne porte ce chemin.
+  "name": "psyneupre",
+  "compatibility_date": "2026-09-25",
+
+  // Script compilé depuis functions/ par `wrangler pages functions build`.
+  // Il vit HORS de dist/ : dans dist/ il serait publié comme asset public.
+  "main": "./worker-build/index.js",
+
+  "assets": {
+    "directory": "./dist",
+    // Obligatoire : le script compilé depuis functions/ appelle env.ASSETS
+    // pour retomber sur les fichiers statiques. Pages fournissait ce binding
+    // tout seul, Workers exige de le déclarer.
+    "binding": "ASSETS"
+  },
+
+  // Workers Logs — la raison d'être du choix Workers plutôt que Pages :
+  // sans ça, un échec d'envoi Resend sur /api/contact est invisible.
+  "observability": { "enabled": true }
+}

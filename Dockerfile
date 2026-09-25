@@ -9,7 +9,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
 
 # Le site statique. robots.txt/sitemap.xml sont copiés pour garder node2 iso au
 # public (Cloudflare Pages) : node2 reste tailnet-only, c'est l'aperçu avant prod.
-# Miroir de l'allowlist de pages-build.sh, moins _headers/_redirects (Pages only)
+# Miroir de l'allowlist de build.sh, moins _headers/_redirects (Workers only)
 # et moins functions/ : les Pages Functions n'ont pas d'équivalent sous nginx,
 # donc POST /api/contact échoue sur l'aperçu — le formulaire ne s'y teste pas.
 COPY index.html styles.css script.js favicon.svg og-image.png robots.txt sitemap.xml /usr/share/nginx/html/

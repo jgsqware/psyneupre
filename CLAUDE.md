@@ -13,33 +13,43 @@ n'existe donc que sur le front public. `seo/` est un outillage Python autonome
 
 | Front | Hôte | Rôle |
 |---|---|---|
-| **Cloudflare Pages** | `www.psyneupre.be` | 🌍 **prod publique**, la seule indexée |
+| **Worker static assets** | `www.psyneupre.be` | 🌍 **prod publique**, la seule indexée |
 | node2 nginx:alpine :8145 | `psyneupre.jgsquare.io` | 🔒 aperçu tailnet-only |
 
 ## Commandes
     python3 -m http.server 8000     # aperçu local
-    ./pages-build.sh                # produit dist/ (ce que Pages publiera)
+    ./build.sh                      # produit dist/ (les assets statiques publiés)
+    npx wrangler pages functions build --outdir=./worker-build/   # compile functions/
+    npx wrangler deploy             # déploie (normalement fait par Workers Builds)
     ship psyneupre                  # déploie l'aperçu node2 (mode A · docker-context)
     ship psyneupre --checks-only    # sondes via l'edge, zéro deploy
 
-Prod publique = `git push origin main` → Cloudflare Pages build auto.
+Prod publique = `git push origin main` → Workers Builds (build + deploy auto).
 
 ## Ce qu'il faut savoir avant de coder
-- 🔴 **Pas de build.** `Dockerfile` COPIE les fichiers tels quels dans nginx ; `pages-build.sh`
-  est une **copie allowlist**, pas un bundler. Introduire un vrai build oblige à reprendre
-  les deux. Tout nouveau fichier à publier doit être ajouté **aux deux** listes, sinon il
-  existe sur un front et pas sur l'autre. Les deux listes ne sont pas identiques :
-  `_headers`/`_redirects` sont Pages-only, `functions/` n'est dans aucune des deux (Pages
-  découvre les Functions à la racine du dépôt, pas dans `dist/`).
+- 🔴 **Pas de bundler.** `Dockerfile` COPIE les fichiers tels quels dans nginx ; `build.sh`
+  est une **copie allowlist**. Tout nouveau fichier à publier doit être ajouté **aux deux**
+  listes, sinon il existe sur un front et pas sur l'autre. Les deux listes ne sont pas
+  identiques : `_headers`/`_redirects` ne valent que pour le Worker, et `functions/` n'est
+  dans aucune des deux — il est compilé à part vers `worker-build/`.
+- 🔴 **`worker-build/` doit rester HORS de `dist/`.** `dist/` est publié intégralement comme
+  assets publics : y compiler le script serveur le mettrait en téléchargement libre.
 - 🔴 **Le formulaire ne marche que sur Pages.** `script.js` POST `/api/contact`, servi par
-  `functions/api/contact.js` (Resend). node2 n'a pas de runtime Functions : nginx répond
+  `functions/api/contact.js` (Resend). node2 n'a pas de runtime Workers : nginx répond
   405 sur ce POST et le formulaire affiche son message d'échec. C'est attendu — l'aperçu
-  node2 ne teste que le rendu. La prod exige trois variables dans Pages → Settings →
-  Environment variables : `RESEND_API_KEY` (secret), `CONTACT_TO`, `CONTACT_FROM`
-  (domaine vérifié chez Resend). Sans elles, l'envoi renvoie 502.
-- 🔴 `pages-build.sh` existe parce que Pages publie **tout** son dossier de sortie. Le
-  pointer sur la racine du dépôt exposerait `CLAUDE.md` (notes infra node2/ship), `seo/`
-  et `nginx.conf` sur le domaine public.
+  node2 ne teste que le rendu. La prod exige trois variables dans le Worker → Settings →
+  Variables & Secrets : `RESEND_API_KEY` (secret), `CONTACT_TO`, `CONTACT_FROM` (domaine
+  vérifié chez Resend). Sans elles, l'envoi renvoie 502 — vérifié en local.
+- 🔴 `build.sh` existe parce que **tout** `dist/` est publié. Pointer `assets.directory`
+  sur la racine du dépôt exposerait `CLAUDE.md` (notes infra node2/ship), `seo/` et
+  `nginx.conf` sur le domaine public.
+- 🟡 **Workers, pas Pages.** Le dépôt suit encore la convention Pages pour le formulaire
+  (`functions/api/contact.js`, routage par fichiers), mais c'est un Worker qui sert :
+  `wrangler pages functions build` fait la conversion. Cloudflare étiquette Pages
+  « legacy » — Pages marche toujours, mais les nouveautés vont à Workers, et Pages n'a
+  ni Workers Logs ni Logpush. C'est pour ces logs qu'on a choisi Workers : sans eux un
+  échec Resend sur `/api/contact` est invisible. `observability` est activé dans
+  `wrangler.jsonc`.
 - 🔴 Les en-têtes de sécurité sont déclarés **deux fois** : `nginx.conf` (node2) et
   `_headers` (Pages). Il n'y a pas de nginx sur Pages — modifier l'un sans l'autre crée
   un écart silencieux entre l'aperçu et la prod.
@@ -61,5 +71,6 @@ Prod publique = `git push origin main` → Cloudflare Pages build auto.
   `OG Image.dc.html` du projet design (1200×630, Chromium headless, polices Google
   embarquées en data-URI). DesignSync tronque les binaires à 256 Kio, donc on le
   **regénère** au lieu de le télécharger.
-- 🟡 GitHub Pages est **désactivé** depuis 2026-08-24 — à ne pas confondre avec
-  Cloudflare Pages, qui est le front public depuis 2026-09-17.
+- 🟡 GitHub Pages est **désactivé** depuis 2026-08-24. Cloudflare **Pages** n'a jamais
+  été créé non plus : le front public est un **Worker** (assets statiques), monté le
+  2026-09-25.
