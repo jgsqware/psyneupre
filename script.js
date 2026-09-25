@@ -47,7 +47,8 @@
     window.addEventListener('resize', onScroll);
     onScroll();
 
-    // Thèmes : 3 mots visibles, bouton « Voir les N autres »
+    // Thèmes : 3 mots visibles, bouton « Voir les N autres » (singulier au N = 1 :
+    // « Difficultés relationnelles » n'a que 4 mots depuis le retrait de « Violences »)
     const SHOWN = 3;
     document.querySelectorAll('.theme-card').forEach(card => {
         const more = card.querySelectorAll('.cloud li').length - SHOWN;
@@ -58,7 +59,8 @@
         btn.setAttribute('aria-expanded', 'false');
         const label = () => {
             const open = card.classList.contains('open');
-            btn.innerHTML = `${open ? 'Réduire' : `Voir les ${more} autres`}<span aria-hidden="true">↓</span>`;
+            const libelle = open ? 'Réduire' : more === 1 ? 'Voir 1 autre' : `Voir les ${more} autres`;
+            btn.innerHTML = `${libelle}<span aria-hidden="true">↓</span>`;
             btn.setAttribute('aria-expanded', String(open));
         };
         btn.addEventListener('click', () => { card.classList.toggle('open'); label(); });
