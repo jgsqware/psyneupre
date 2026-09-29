@@ -1,5 +1,37 @@
 // Navigation mobile, barre d'action mobile, thèmes repliables, formulaire de contact.
 (() => {
+    // Mesure d'audience maison (functions/api/e.js) : événements anonymes, sans cookie ni
+    // identifiant. sendBeacon survit à la navigation (clic sur tel:, mailto:, Maps).
+    const referrer = (() => { try { return document.referrer ? new URL(document.referrer).hostname : ''; } catch { return ''; } })();
+    const device = matchMedia('(pointer: coarse)').matches ? 'mobile' : 'desktop';
+    const track = (e, l = '') => {
+        const data = JSON.stringify({ e, l, p: location.pathname, r: referrer, m: device });
+        try { if (!navigator.sendBeacon('/api/e', data)) throw 0; } catch { fetch('/api/e', { method: 'POST', body: data, keepalive: true }).catch(() => {}); }
+    };
+    // Endroit de la page où l'action a eu lieu : nav, section (#contact…), barre mobile, pied.
+    const zone = el => {
+        if (el.closest('.sticky-cta')) return 'barre-mobile';
+        if (el.closest('nav')) return 'nav';
+        if (el.closest('footer')) return 'pied';
+        return el.closest('section[id], header[id]')?.id || 'page';
+    };
+    document.addEventListener('click', e => {
+        const a = e.target.closest('a');
+        if (!a) return;
+        const href = a.getAttribute('href') || '';
+        if (href === 'tel:112' || href === 'tel:080032123') track('tel_urgence', href.slice(4));
+        else if (href.startsWith('tel:')) track('tel', zone(a));
+        else if (href.startsWith('mailto:')) track('mail', zone(a));
+        else if (href.includes('google.com/maps')) track('maps', zone(a));
+        else if (href === '#contact') track('cta_contact', zone(a));
+    }, { capture: true });
+    // Profondeur de lecture : 50 % et 90 % de la page, une fois chacun.
+    const depths = [[0.5, 'scroll_50'], [0.9, 'scroll_90']];
+    addEventListener('scroll', () => {
+        const ratio = (scrollY + innerHeight) / document.documentElement.scrollHeight;
+        while (depths.length && ratio >= depths[0][0]) track(depths.shift()[1]);
+    }, { passive: true });
+
     const body = document.body;
     const nav = document.getElementById('nav');
     const toggle = document.querySelector('.nav-toggle');
@@ -100,7 +132,7 @@
             setError(field, msg);
             if (msg && !firstInvalid) firstInvalid = field;
         });
-        if (firstInvalid) { firstInvalid.focus(); return; }
+        if (firstInvalid) { firstInvalid.focus(); track('form_invalid', firstInvalid.name); return; }
 
         const data = Object.fromEntries(new FormData(form));
         submit.disabled = true;
@@ -111,8 +143,10 @@
             success.querySelector('[data-sent-email]').textContent = data.email.trim();
             form.hidden = true;
             success.hidden = false;
+            track('form_sent');
         } catch {
             failure.hidden = false;
+            track('form_error');
         } finally {
             submit.disabled = false;
             submit.textContent = 'Envoyer le message';

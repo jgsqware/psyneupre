@@ -91,6 +91,11 @@ Prod publique = `git push origin main` → Workers Builds (build + deploy auto).
   dans `index.html`**, ne pas en remettre, sinon chaque visite est comptée deux fois.
   L'injection marche aussi sur les réponses du Worker (vérifié le 2026-09-29) ; Cloudflare
   ne l'applique qu'à un user-agent de navigateur, un `curl` nu ne la voit pas.
+- 🟢 **Événements anonymes maison** (2026-09-29) : `script.js` envoie par `sendBeacon` les
+  actions utiles (appel, mail, itinéraire, bouton contact, formulaire envoyé/en erreur/
+  invalide, lecture 50/90 %) à `POST /api/e` (`functions/api/e.js`), qui les écrit dans
+  Workers Analytics Engine (dataset `site_events`, binding `EVENTS`). Ni IP, ni user-agent,
+  ni cookie. Liste blanche des événements côté serveur. Lu par le dashboard `stats`.
 - 🟢 `sexologue-neupre.be` (apex et www) est une **301 vers `www.psyneupre.be`** (Redirect
   Rule de sa zone, 2026-09-29) : même site, SEO consolidé sur un seul domaine. Ses
   domaines custom Worker restent en place mais ne reçoivent plus de trafic.

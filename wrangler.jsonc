@@ -34,6 +34,9 @@
   // formulaire renvoyer un 502 silencieux en production.
   "secrets": { "required": ["RESEND_API_KEY"] },
 
+  // Événements anonymes (functions/api/e.js), lus par le dashboard stats.
+  "analytics_engine_datasets": [{ "binding": "EVENTS", "dataset": "site_events" }],
+
   // Workers Logs — la raison d'être du choix Workers plutôt que Pages :
   // sans ça, un échec d'envoi Resend sur /api/contact est invisible.
   "observability": { "enabled": true }
