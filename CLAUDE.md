@@ -86,9 +86,14 @@ Prod publique = `git push origin main` → Workers Builds (build + deploy auto).
   en same-origin). Ce sont des polices **variables** : 6 fichiers couvrent toutes les
   graisses, d'où les `font-weight: 400 600`. Toute nouvelle graisse se prend dans le
   fichier existant, pas en ajoutant un fichier. `fonts/` est dans les deux allowlists.
-- 🟡 Cloudflare Web Analytics est posé **à la main** en bas de `index.html` : l'injection
-  automatique ne s'applique pas aux réponses d'un Worker, elle ne vise que les origines
-  proxifiées. Le token est public par construction, ce n'est pas un secret.
+- 🟡 Cloudflare Web Analytics est **injecté automatiquement par Cloudflare** (site en
+  auto-install, règle de mesure limitée à `www.psyneupre.be`) : il n'y a **plus de script
+  dans `index.html`**, ne pas en remettre, sinon chaque visite est comptée deux fois.
+  L'injection marche aussi sur les réponses du Worker (vérifié le 2026-09-29) ; Cloudflare
+  ne l'applique qu'à un user-agent de navigateur, un `curl` nu ne la voit pas.
+- 🟢 `sexologue-neupre.be` (apex et www) est une **301 vers `www.psyneupre.be`** (Redirect
+  Rule de sa zone, 2026-09-29) : même site, SEO consolidé sur un seul domaine. Ses
+  domaines custom Worker restent en place mais ne reçoivent plus de trafic.
 - 🔴 **Le mail de `psyneupre.be` est du Google Workspace, et ses enregistrements DNS ne
   sont PAS optionnels.** `celineliurno@psyneupre.be` est la boîte, `contact@psyneupre.be`
   en est un alias — c'est l'adresse que sert le formulaire (`CONTACT_TO`). La zone a été
